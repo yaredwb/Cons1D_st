@@ -79,19 +79,19 @@ T = st.sidebar.slider("Dimensionless time range, T", 0.01, 2.0, (0.01, 1.0))
 
 yu, tU = analytical_solution(H, cv, u0, T, bc)
 
-cols1 = ['H (m)'] + ['T = ' + str(round(i, 2)) for i in np.linspace(T[0], T[1], 10)]
+cols1 = ['H (m)'] + [str(round(i, 2)) for i in np.linspace(T[0], T[1], 10)]
 df1 = pd.DataFrame(yu, columns=cols1)
 df1_melt = df1.melt(
   id_vars='H (m)',
   value_vars=cols1[1:],
-  var_name='Dimensionless time',
+  var_name='Dimensionless time, T',
   value_name='Pore pressure, u (kPa)'
 )
 
 fig1 = px.line(df1_melt,
   x='Pore pressure, u (kPa)',
   y='H (m)',
-  color='Dimensionless time'
+  color='Dimensionless time, T'
 )
 fig1.layout.update(
   title='Excess Pore Pressure Dissipation',
