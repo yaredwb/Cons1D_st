@@ -85,6 +85,7 @@ u0 = st.sidebar.number_input(
 cv = st.sidebar.number_input(
   'Coefficient of consolidation (m2/yr)',
   min_value=0.01,
+  max_value=10,
   value=0.1,
   step=0.1
 )
