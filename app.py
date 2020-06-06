@@ -68,13 +68,27 @@ bc = st.sidebar.selectbox(
   )
 )
 
-H = float(st.sidebar.text_input('Model height (m)', 2))
-u0 = float(st.sidebar.text_input('Initial excess pore pressure (kPa)', 100))
-cv = st.sidebar.slider(
-  "Coefficient of consolidation (m2/yr)",
-  min_value=0.01,
-  max_value=10.0
+H = st.sidebar.number_input(
+  'Layer thickness (m)',
+  min_value=1,
+  step=1,
+  value=2
 )
+
+u0 = st.sidebar.number_input(
+  'Initial excess pore pressure (kPa)',
+  min_value=50,
+  step=25,
+  value=100
+)
+
+cv = st.sidebar.number_input(
+  'Coefficient of consolidation (m2/yr)',
+  min_value=0.01,
+  value=0.1,
+  step=0.1
+)
+
 T = st.sidebar.slider("Dimensionless time range, T", 0.01, 2.0, (0.01, 1.0))
 
 yu, tU = analytical_solution(H, cv, u0, T, bc)
