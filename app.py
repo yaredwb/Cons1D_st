@@ -168,3 +168,11 @@ if st.sidebar.checkbox("Show analytical solution", value=True):
   U = 1 - \\frac{8}{\pi^2} \sum_{i=1}^\infty \\frac{1}{(2i-1)^2}  \exp{\left[ -{(2i-1)}^2 \\frac{\pi^2 T}{4} \\right]}
   $$
   """)
+
+st.sidebar.markdown(  
+  '''
+  [GitHub](https://github.com/yaredwb)
+  [LinkedIn](https://www.linkedin.com/in/yaredworku/) 
+  '''
+)
+
