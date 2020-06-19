@@ -3,11 +3,11 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 
-def analytical_solution(H, cv, uo, T_range, drainage):
+def analytical_solution(H, cv, uo, t_range, drainage):
 
-  T = np.linspace(T_range[0], T_range[1], 10)
+  t = np.logspace(t_range[0], t_range[1], 10)  
   N = 50
-  u = np.zeros((len(T), N))
+  u = np.zeros((len(t), N))
 
   if drainage == 'Top and bottom':
     h = H/2.0
@@ -32,15 +32,15 @@ def analytical_solution(H, cv, uo, T_range, drainage):
   u[:,z_start:z_end] = uo
 
   term1 = np.pi * z[z_start:z_end] / (2*h)
-  for i in range(len(T)):
-    term2 = (np.pi/2)**2 * T[i]
+  for i in range(len(t)):
+    term2 = (np.pi/2)**2 * cv * t[i] / h**2
     sum1 = 0
     for k in range(1, 100):
       factor = ((-1.0)**(k-1) / (2*k-1))
       sum1 += factor * np.cos((2*k-1) * term1) * np.exp(-1.0 * (2*k-1)**2 * term2)
     u[i,z_start:z_end] = uo * 4.0/np.pi * sum1
 
-  Tu = np.linspace(T_range[0], T_range[1], 1000)
+  Tu = np.linspace(t_range[0], t_range[1], 1000)
   t = np.array([i*h**2/(cv * 0.00273973) for i in Tu])
 
   sum2 = np.zeros(len(Tu))
@@ -68,45 +68,52 @@ bc = st.sidebar.selectbox(
   )
 )
 
-H = st.sidebar.number_input(
-  'Layer thickness (m)',
-  min_value=1,
-  step=1,
-  value=2
-)
-
-u0 = st.sidebar.number_input(
-  'Initial excess pore pressure (kPa)',
-  min_value=50,
-  step=25,
-  value=100
-)
-
 cv = st.sidebar.number_input(
-  'Coefficient of consolidation (m2/yr)',
+  label='Coefficient of consolidation (m2/yr)',
   min_value=0.01,
   max_value=10.0,
   value=0.1,
   step=0.1
 )
 
-T = st.sidebar.slider("Dimensionless time range, T", 0.01, 2.0, (0.01, 1.0))
+H = st.sidebar.number_input(
+  label='Layer thickness (m)',
+  min_value=1,
+  step=1,
+  value=2
+)
 
-yu, tU = analytical_solution(H, cv, u0, T, bc)
+u0 = st.sidebar.number_input(
+  label='Initial excess pore pressure (kPa)',
+  min_value=50,
+  step=25,
+  value=100
+)
 
-cols1 = ['H (m)'] + [str(round(i, 2)) for i in np.linspace(T[0], T[1], 10)]
+t = st.sidebar.slider(
+  label="Time range, t (yr)",
+  min_value=0.01,
+  max_value=2.0,
+  value=(0.01, 1.0)
+)
+
+
+
+yu, tU = analytical_solution(H, cv, u0, t, bc)
+
+cols1 = ['H (m)'] + [str(round(i, 2)) for i in np.logspace(t[0], t[1], 10)]
 df1 = pd.DataFrame(yu, columns=cols1)
 df1_melt = df1.melt(
   id_vars='H (m)',
   value_vars=cols1[1:],
-  var_name='Dimensionless time, T',
+  var_name='Time, t (yr)',
   value_name='Pore pressure, u (kPa)'
 )
 
 fig1 = px.line(df1_melt,
   x='Pore pressure, u (kPa)',
   y='H (m)',
-  color='Dimensionless time, T'
+  color='Time, t (yr)'
 )
 fig1.layout.update(
   title='Excess Pore Pressure Dissipation',
